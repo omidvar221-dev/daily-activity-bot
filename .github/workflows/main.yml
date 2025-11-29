@@ -1,0 +1,30 @@
+name: Daily Green Commit
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 10 * * *" # هر روز ساعت ۱۰ صبح به وقت جهانی اجرا می‌شود
+  workflow_dispatch: # این خط اجازه می‌دهد دستی هم اجرایش کنی
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update Date File
+        run: |
+          date >> last_run.txt
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add last_run.txt
+          git commit -m "Daily activity: keeping the streak alive 🟩"
+          git push
